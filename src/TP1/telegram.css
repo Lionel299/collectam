@@ -1,0 +1,598 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    background: url('./w13.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 80%;
+    color: white;
+    width: 100%;
+    overflow: hidden;
+}
+p{
+    color: rgb(212, 212, 207);
+}
+.Flex{
+    display: flex;
+    flex-direction: row;
+    height: calc(100vh - 48px);
+    overflow: hidden;
+}
+.Left{
+    margin-top: 8px;
+    height: auto;
+    width: 320px;
+    overflow-y: scroll;
+}
+.Top-line{
+    display: flex;
+    flex-direction: column;
+}
+.g{
+    display: flex;
+    flex-direction: row;
+}
+.Bottom-line{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+.top{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 48px;
+    margin-left: 44px;
+}
+.close{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.search input{
+    background-color: rgb(96, 95, 95);
+    border: none;
+    text-align: center;
+    border-radius: 4px;
+    padding: 2px;
+    width: 200px;
+    margin-left: 2px;
+}
+.z{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}
+.bottom{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+}
+a{
+    text-decoration: none;
+}
+.part-1{
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    height: 120px;
+    padding: 8px;
+}
+.line3{
+    display: flex;
+}
+.line3::before,
+.line3::after{
+    content: '';
+    flex-grow: 1;
+    height: 0.5px;
+    background-color: rgb(96, 95, 95);
+}
+.part-2{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px;
+}
+.part-3{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    height: 56px;
+}
+.part-4{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    height: 56px;
+}
+.part-5{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    height: 56px;
+}
+.part-6{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    height: 56px;
+}
+.part-7{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    height: 56px;
+}
+.part-8{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    height: 56px;
+}
+.part-9{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    height: 56px;
+}
+.part-10{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    height: 56px;
+}
+.part-3:hover{
+    cursor: pointer;
+    background-color: rgb(81, 80, 80);
+}
+.part-3.active{
+    background: rgb(42, 158, 190);
+}
+.part-4:hover{
+    cursor: pointer;
+    background-color: rgb(81, 80, 80);
+}
+.part-4.active{
+    background: rgb(42, 158, 190);
+}
+.part-5:hover{
+    cursor: pointer;
+    background-color: rgb(81, 80, 80);
+}
+.part-5.active{
+    background: rgb(42, 158, 190);
+}
+.part-6:hover{
+    cursor: pointer;
+    background-color: rgb(81, 80, 80);
+}
+.part-6.active{
+    background: rgb(42, 158, 190);
+}
+.part-7:hover{
+    cursor: pointer;
+    background-color: rgb(81, 80, 80);
+}
+.part-7.active{
+    background: rgb(42, 158, 190);
+}
+.part-8:hover{
+    cursor: pointer;
+    background-color: rgb(81, 80, 80);
+}
+.part-8.active{
+    background: rgb(42, 158, 190);
+}
+.part-9:hover{
+    cursor: pointer;
+    background-color: rgb(81, 80, 80);
+}
+.part-9.active{
+    background: rgb(42, 158, 190);
+}
+.part-10:hover{
+    cursor: pointer;
+    background-color: rgb(81, 80, 80);
+}
+.part-10.active{
+    background: rgb(42, 158, 190);
+}
+.Profile{
+    background-color: aqua;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+.profile2{
+    background-color: aqua;
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+}
+.green{
+    background-color: rgb(3, 157, 3);
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+.Green{
+    background-color: rgb(3, 157, 3);
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+}
+.white{
+    background-color: white;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+.White{
+    background-color: white;
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+}
+.Picture{
+    background-color: rgb(130, 129, 129);
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+.picture{
+    background-color: rgb(130, 129, 129);
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+}
+.Profile1{
+    background-color: pink;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+.profile3{
+    background-color: pink;
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+}
+.y{
+    border: none;
+    padding: 12px;
+    width: 200px;
+    border-radius: 24px;
+    background-color: rgba(210, 73, 73,01);
+    color: white;
+    position: absolute;
+    
+    bottom: 64px;
+    margin-left: 50px;
+    
+}
+.y:hover{
+    cursor: pointer;
+    background-color: brown;
+}
+.Line{
+    display: flex;
+    flex-direction: column;
+}
+.Line::before,
+.Line::after{
+    content: '';
+    flex-grow: 1;
+    background-color: rgb(96, 95, 95);
+    width: 1px;
+    height: 100px;
+}
+.top-bar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px;
+}
+.left{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}
+.profile{
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    background-color: pink;
+    margin-left: 12px;
+}
+.text{
+    display: flex;
+    flex-direction: column;
+}
+.right{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+.line{
+    display: flex;
+}
+.line::before,
+.line::after{
+    content: '';
+    flex-grow: 1;
+    height: 0.5px;
+    background-color: rgb(96, 95, 95);
+    opacity: 50%;
+}
+.low-bar{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 6px;
+}
+.line2{
+    display: flex;
+    flex-direction: column;
+}
+.line2::before,
+.line2::after{
+    content: '';
+    flex-grow: 1;
+    width: 4px;
+    height: 24px;
+    background-color: rgb(89, 185, 245);
+}
+.line2::before{
+    border-radius: 40px 40px 0 0;
+}
+.line2::after{
+    border-radius: 0 0 40px 40px;
+    
+}
+.message{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+.flex{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+.Message{
+    display: flex;
+    flex-direction: column;
+}
+.a{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 240px;
+}
+.c{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 8px;
+    gap: 556px;
+
+    
+}
+.d{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+.f{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.pic{
+    background-color: brown;
+    width: 200px;
+}
+.hero-1{
+    padding-left: 60px;
+}
+.l{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.m{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 10px;
+}
+.line-bottom{
+    display: flex;
+}
+.line-bottom::before,
+.line-bottom::after{
+    content: '';
+    flex-grow: 1;
+    height: 0.5px;
+    background-color: rgb(96, 95, 95);
+}
+.footer{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+}
+.three{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+.x{
+    height: 16px;
+    width: 48px;
+    border-radius: 12px;
+    padding: 4px;
+    margin-top: 8px;
+    background-color: rgb(18, 44, 61);
+    color: rgb(89, 185, 245);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.line4{
+    display: flex;
+    flex-direction: column;
+}
+.line4::before,
+.line4::after{
+    content: '';
+    flex-grow: 1;
+    width: 1px;
+    height: 25px;
+    background-color: rgb(96, 95, 95);
+}
+.l-side{
+    width: 320px;
+    
+}
+.r-side{
+    width: 800px;
+}
+.Right1,
+.Right2,
+.Right3,
+.Right4,
+.Right5,
+.Right6,
+.Right7,
+.Right8 {
+    opacity: 0;
+    display: none;
+}
+.Right1.show,
+.Right2.show,
+.Right3.show,
+.Right4.show,
+.Right5.show,
+.Right6.show,
+.Right7.show,
+.Right8.show {
+    opacity: 1;
+    display: block;
+    margin-top: 8px;
+    height: auto;
+    width: 800px;
+    overflow-y: scroll;
+}
+::-webkit-scrollbar{
+    width: 8px;
+}
+::-webkit-scrollbar-track{
+    background: gray;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb{
+    background: rgb(84, 83, 83);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover{
+    background: rgb(77, 75, 75);
+}
+.messageField{
+    display: block;
+    padding: 12px;
+    height: 320px;
+    overflow-y: auto;
+}
+.message-box {
+    background-color: rgb(45, 144, 243);
+    color: white;
+    border-radius: 16px 0px 16px 16px;
+    padding: 10px;
+    margin-top: 20px;
+    width: fit-content;
+    max-width: 60%;
+    margin-left: auto;
+}
+.left-box{
+    background-color: rgb(255, 255, 255);
+    color: rgb(80, 79, 79);
+    border-radius: 0px 16px 16px 16px;
+    padding: 10px;
+    width: fit-content;
+    max-width: 60%;
+    margin-right: auto;
+}
+.chat-footer{
+    display: flex;
+    padding: 10px;
+    gap: 8px;
+    background: rgb(46, 46, 72);
+}
+.chat-footer input{
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 24px;
+    background-color: rgb(96, 95, 95);
+    color: rgb(214, 214, 214);
+}
+.chat-footer button{
+    padding: 8px;
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+}
+#sendBtn{
+    background: rgb(54, 67, 86);
+    color: white;
+}
+#sendBtn:hover{
+    background-color: rgb(77, 95, 121);
+}
+#deleteLastBtn{
+    background: rgb(146, 1, 1);
+    color: white;
+}
+#deleteLastBtn:hover{
+    background-color: rgb(201, 23, 23);
+}
+#deleteAllBtn{
+    background: rgb(146, 1, 1);
+    color: white;
+}
+#deleteAllBtn:hover{
+    background-color: rgb(201, 23, 23);
+}

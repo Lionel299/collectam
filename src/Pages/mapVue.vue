@@ -13,6 +13,9 @@ import 'leaflet/dist/leaflet.css'
 import markerIconPng from 'leaflet/dist/images/marker-icon.png'
 import markerShadowPng from 'leaflet/dist/images/marker-shadow.png'
 
+// Récupérer l'URL du backend depuis la variable d'environnement Vue.js
+const apiUrl = process.env.VUE_APP_API_URL
+
 const mapContainer = ref(null)
 const map = ref(null)
 const myMarker = ref(null)
@@ -42,9 +45,9 @@ function localiseMoi() {
         const lat = position.coords.latitude
         const lng = position.coords.longitude
 
-        // 1. Envoie la position au backend
+        // 1. Envoie la position au backend en utilisant apiUrl
         try {
-          await fetch('http://localhost:3000/api/saveLocation', {
+          await fetch(`${apiUrl}/api/saveLocation`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ latitude: lat, longitude: lng, deviceId })
@@ -83,6 +86,7 @@ onMounted(async () => {
   }).addTo(map.value)
 })
 </script>
+
 
 <style>
 .localise-btn {

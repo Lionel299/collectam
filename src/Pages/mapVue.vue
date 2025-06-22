@@ -47,7 +47,7 @@ function localiseMoi() {
 
         // 1. Envoie la position au backend en utilisant apiUrl
         try {
-          await fetch(`${apiUrl}/api/saveLocation`, {
+          await fetch(`${apiUrl}/api/location/saveLocation`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ latitude: lat, longitude: lng, deviceId })

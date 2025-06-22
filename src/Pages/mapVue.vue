@@ -55,6 +55,7 @@ function localiseMoi() {
         } catch (err) {
           console.error('Erreur en envoyant la position au backend', err)
         }
+        
 
         // 2. Place ou déplace le marqueur sur la carte
         if (myMarker.value) {

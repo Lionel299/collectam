@@ -1,6 +1,8 @@
 <template>
   <div>
-    <button class="localise-btn" @click="localiseMoi">Localise moi</button>
+    <button class="localise-btn" @click="localiseMoi" :disabled="isLoading">
+      {{ isLoading ? 'Localisation en cours...' : 'Localise moi' }}
+    </button>
     <div ref="mapContainer" style="height: 500px; margin-top:10px;"></div>
     <div v-if="errorMessage" style="color: red;">{{ errorMessage }}</div>
   </div>
@@ -13,16 +15,14 @@ import 'leaflet/dist/leaflet.css'
 import markerIconPng from 'leaflet/dist/images/marker-icon.png'
 import markerShadowPng from 'leaflet/dist/images/marker-shadow.png'
 
-// Récupérer l'URL du backend depuis la variable d'environnement Vue.js
 const apiUrl = process.env.VUE_APP_API_URL
-
 
 const mapContainer = ref(null)
 const map = ref(null)
 const myMarker = ref(null)
 const errorMessage = ref('')
+const isLoading = ref(false)
 
-// Icône par défaut Leaflet
 const defaultIcon = L.icon({
   iconUrl: markerIconPng,
   shadowUrl: markerShadowPng,
@@ -32,7 +32,6 @@ const defaultIcon = L.icon({
   shadowSize: [41, 41]
 })
 
-// Génère ou récupère un deviceId unique pour l'utilisateur
 let deviceId = localStorage.getItem('deviceId')
 if (!deviceId) {
   deviceId = Math.random().toString(36).substring(2)
@@ -40,44 +39,47 @@ if (!deviceId) {
 }
 
 function localiseMoi() {
-  if ('geolocation' in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      async position => {
-        const lat = position.coords.latitude
-        const lng = position.coords.longitude
-
-        // 1. Envoie la position au backend en utilisant apiUrl
-        try {
-          await fetch(`${apiUrl}/api/location/saveLocation`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ latitude: lat, longitude: lng, deviceId })
-          })
-        } catch (err) {
-          console.error('Erreur en envoyant la position au backend', err)
-        }
-        
-
-        // 2. Place ou déplace le marqueur sur la carte
-        if (myMarker.value) {
-          myMarker.value.setLatLng([lat, lng])
-        } else {
-          myMarker.value = L.marker([lat, lng], { icon: defaultIcon })
-            .addTo(map.value)
-            .bindPopup('Vous êtes ici')
-            .openPopup()
-        }
-        map.value.setView([lat, lng], 16)
-        errorMessage.value = ''
-      },
-      error => {
-        errorMessage.value = "Erreur de géolocalisation : " + error.message
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    )
-  } else {
+  if (!('geolocation' in navigator)) {
     errorMessage.value = "La géolocalisation n'est pas supportée par ce navigateur."
+    return
   }
+
+  isLoading.value = true
+  errorMessage.value = ''
+
+  navigator.geolocation.getCurrentPosition(
+    async position => {
+      const lat = position.coords.latitude
+      const lng = position.coords.longitude
+
+      try {
+        await fetch(`${apiUrl}/api/location/saveLocation`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ latitude: lat, longitude: lng, deviceId })
+        })
+      } catch (err) {
+        console.error('Erreur en envoyant la position au backend', err)
+        errorMessage.value = "Impossible d'envoyer la position au serveur."
+      }
+
+      if (myMarker.value) {
+        myMarker.value.setLatLng([lat, lng])
+      } else {
+        myMarker.value = L.marker([lat, lng], { icon: defaultIcon })
+          .addTo(map.value)
+          .bindPopup('Vous êtes ici')
+          .openPopup()
+      }
+      map.value.setView([lat, lng], 16)
+      isLoading.value = false
+    },
+    error => {
+      errorMessage.value = "Erreur de géolocalisation : " + error.message
+      isLoading.value = false
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  )
 }
 
 onMounted(async () => {
@@ -88,7 +90,6 @@ onMounted(async () => {
   }).addTo(map.value)
 })
 </script>
-
 
 <style>
 .localise-btn {
@@ -104,8 +105,12 @@ onMounted(async () => {
   transition: background 0.2s, transform 0.2s;
   margin-bottom: 10px;
 }
-.localise-btn:hover {
+.localise-btn:hover:enabled {
   background-color: #1565c0;
   transform: translateY(-2px) scale(1.03);
+}
+.localise-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 </style>

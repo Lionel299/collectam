@@ -104,7 +104,6 @@ onMounted(async () => {
   transition: background 0.2s, transform 0.2s;
   margin-bottom: 10px;
 }
-
 .localise-btn:hover {
   background-color: #1565c0;
   transform: translateY(-2px) scale(1.03);

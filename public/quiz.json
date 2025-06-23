@@ -1,0 +1,33 @@
+{
+    "title": "Questionnaire sur le Football",
+    "minimum_score": 4,
+    "success_message": "Felicitattions! Vous etes un fan de football.",
+    "failure_message": "Dommage! Regarder plus de match de football.",
+    "questions": [
+        {
+            "question": "Qui a inventer le football?",
+            "choices": ["Angleterre", "Bresil", "Chine", "Cameroun"],
+            "correct_answer": "Chine"
+        },
+        {
+          "question": "Quelle equipe detient le plus de coupe du monde?",
+            "choices": ["France", "Bresil", "Allemagne", "Cameroun"],
+            "correct_answer": "Bresil"  
+        },
+        {
+            "question": "Combien de CAN detient le Continent Camerounais?",
+            "choices": ["10", "7", "5", "0"],
+            "correct_answer": "5"
+        },
+        {
+            "question": "Qui sauve le real marmitte ?",
+            "choices": ["Vini", "Mbappe", "Rodrygo", "Jude"],
+            "correct_answer": "Rodrygo"
+        },
+        {
+            "question": "Qui est/sont le/les GOAT du football?",
+            "choices": ["Messi", "CR7", "Messi et CR7", "Aboubakar Vincent"],
+            "correct_answer": "Messi et CR7"
+        }
+    ]
+}

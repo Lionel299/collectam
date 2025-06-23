@@ -1,0 +1,38 @@
+body{
+    background-image: url('./nature.jpg');
+    background-size: cover;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.flex-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}
+
+.flex-box{
+    background-color: rgb(251, 253, 252);
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.image img{
+    display: block;
+    margin: auto;
+}
+
+h2{
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.info input{
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+

@@ -16,6 +16,7 @@ import markerShadowPng from 'leaflet/dist/images/marker-shadow.png'
 // Récupérer l'URL du backend depuis la variable d'environnement Vue.js
 const apiUrl = process.env.VUE_APP_API_URL
 
+
 const mapContainer = ref(null)
 const map = ref(null)
 const myMarker = ref(null)

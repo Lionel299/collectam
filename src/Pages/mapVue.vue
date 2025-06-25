@@ -33,8 +33,8 @@ if (!deviceId) {
 
 // Icônes locales dans public/icons/
 const icons = {
-  citizen: '/icons/userIcon.svg',
-  collector: '/icons/collectorIcon.svg',
+  citizen: 'leaflet/images/userIcon.svg',
+  collector: 'leaflet/images/collectorIcon.svg',
   admin: '/icons/admin.png'
 }
 
@@ -47,7 +47,7 @@ async function loadAllMarkers() {
     locations.forEach(loc => {
       const el = document.createElement('div')
       el.className = 'marker'
-      el.style.backgroundImage = `url(/icons/userIcon.svg)`
+      el.style.backgroundImage = `url(${icons[loc.userType] || icons.citizen})`
       el.style.width = '30px'
       el.style.height = '40px'
       el.style.backgroundSize = 'contain'

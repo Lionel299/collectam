@@ -54,10 +54,11 @@ async function loadAllMarkers() {
       el.style.backgroundRepeat = 'no-repeat'
       el.style.cursor = 'pointer'
 
-      const marker = new maplibregl.Marker(el)
-        .setLngLat([loc.longitude, loc.latitude])
-        .setPopup(new maplibregl.Popup({ offset: 25 }).setText(`Device: ${loc.deviceId}\nType: ${loc.userType}`))
-        .addTo(map)
+      const marker = new maplibregl.Marker(el, { offset: [0, -20] }) // décalage vertical moitié hauteur négative
+  .setLngLat([loc.longitude, loc.latitude])
+  .setPopup(new maplibregl.Popup({ offset: 25 }).setText(`Device: ${loc.deviceId}\nType: ${loc.userType}`))
+  .addTo(map)
+
       allMarkers.push(marker)
     })
   } catch (err) {
@@ -174,6 +175,7 @@ onBeforeUnmount(() => {
   background-size: contain;
   background-repeat: no-repeat;
   cursor: pointer;
+  position: relative;
 }
 </style>
 

@@ -31,11 +31,11 @@ if (!deviceId) {
   localStorage.setItem('deviceId', deviceId)
 }
 
-// Icônes locales dans public/icons/
+// Icônes hébergées en ligne (exemple via icons8 ou autre CDN libre)
 const icons = {
-  citizen: '/icons/userIcon.svg',
-  collector: '/icons/collectorIcon.svg',
-  admin: '/icons/adminIcon.svg'
+  citizen: 'https://img.icons8.com/emoji/48/user-emoji.png',
+  collector: 'https://img.icons8.com/fluency/48/garbage-truck.png',
+  admin: 'https://img.icons8.com/emoji/48/man-office-worker.png'
 }
 
 async function loadAllMarkers() {
@@ -148,6 +148,7 @@ onBeforeUnmount(() => {
   if (map) map.remove()
 })
 </script>
+
 
 
 <style scoped>

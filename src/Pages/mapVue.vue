@@ -14,7 +14,7 @@ import { useRoute } from 'vue-router'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
-const apiUrl = process.env.VUE_APP_API_URL
+const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:3000'
 
 const mapContainer = ref(null)
 let map = null
@@ -48,6 +48,8 @@ async function loadAllMarkers() {
       const el = document.createElement('div')
       el.className = 'marker'
       el.style.backgroundImage = `url(${icons[loc.userType] || icons.citizen})`
+      console.log("bonjour");
+      
       el.style.width = '30px'
       el.style.height = '40px'
       el.style.backgroundSize = 'contain'

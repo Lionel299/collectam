@@ -47,6 +47,9 @@ async function loadAllMarkers() {
     locations.forEach(loc => {
       const el = document.createElement('div')
       el.className = 'marker'
+
+       console.log('icons:', icons)
+  console.log('loc.userType:', loc.userType)
       el.style.backgroundImage = `url(${icons[loc.userType] || icons.citizen})`
       console.log("bonjour");
       

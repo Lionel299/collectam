@@ -363,7 +363,7 @@ function goToMap() {
 
       isLoading.value = false
       // Redirection vers la map avec le rôle en query param
-      router.push({ name: 'Map', query: { userType: role.value } })
+      router.push({ name: 'map', query: { userType: role.value } })
     },
     error => {
       errorMessage.value = "Erreur de géolocalisation : " + error.message

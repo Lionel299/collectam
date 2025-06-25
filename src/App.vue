@@ -1,11 +1,9 @@
 <template>
   <div id="app">
-    <mapVue />
+    <router-view />
   </div>
 
 </template>
 
 <script setup>
-import mapVue from "./Pages/mapVue.vue";
-
 </script>

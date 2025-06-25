@@ -20,6 +20,7 @@ const apiUrl = process.env.VUE_APP_API_URL
 const mapContainer = ref(null)
 const map = ref(null)
 const myMarker = ref(null)
+const allMarkers = ref([]) // Pour stocker tous les marqueurs affichés
 const errorMessage = ref('')
 const isLoading = ref(false)
 
@@ -38,6 +39,24 @@ if (!deviceId) {
   localStorage.setItem('deviceId', deviceId)
 }
 
+// Charger toutes les positions existantes et les afficher sur la carte
+async function loadAllMarkers() {
+  try {
+    const res = await fetch(`${apiUrl}/api/location/all`)
+    if (!res.ok) throw new Error('Erreur lors du chargement des positions')
+    const locations = await res.json()
+    locations.forEach(loc => {
+      const marker = L.marker([loc.latitude, loc.longitude], { icon: defaultIcon })
+        .addTo(map.value)
+        .bindPopup(`Device: ${loc.deviceId}`)
+      allMarkers.value.push(marker)
+    })
+  } catch (err) {
+    errorMessage.value = "Impossible de charger les positions existantes."
+    console.error(err)
+  }
+}
+
 function localiseMoi() {
   if (!('geolocation' in navigator)) {
     errorMessage.value = "La géolocalisation n'est pas supportée par ce navigateur."
@@ -53,16 +72,20 @@ function localiseMoi() {
       const lng = position.coords.longitude
 
       try {
-        await fetch(`${apiUrl}/api/location/saveLocation`, {
+        const res = await fetch(`${apiUrl}/api/location/saveLocation`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ latitude: lat, longitude: lng, deviceId })
         })
+        if (!res.ok) throw new Error('Erreur serveur lors de l’enregistrement')
       } catch (err) {
         console.error('Erreur en envoyant la position au backend', err)
         errorMessage.value = "Impossible d'envoyer la position au serveur."
+        isLoading.value = false
+        return
       }
 
+      // Ajouter ou mettre à jour le marqueur de l’utilisateur
       if (myMarker.value) {
         myMarker.value.setLatLng([lat, lng])
       } else {
@@ -84,10 +107,11 @@ function localiseMoi() {
 
 onMounted(async () => {
   await nextTick()
-  map.value = L.map(mapContainer.value).setView([0, 0], 2)
+  map.value = L.map(mapContainer.value, { zoomAnimation: false }).setView([0, 0], 2)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map.value)
+  await loadAllMarkers()
 })
 </script>
 

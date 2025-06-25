@@ -121,7 +121,8 @@ onMounted(() => {
     zoom: 2
   })
 
-  map.on('load', () => {
+    map.on('style.load', () => {
+    map.setProjection({ type: 'globe' })  // Active la projection globe
     loadAllMarkers()
   })
 })

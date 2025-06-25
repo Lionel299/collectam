@@ -33,7 +33,7 @@ if (!deviceId) {
 
 // Icônes hébergées en ligne (exemple via icons8 ou autre CDN libre)
 const icons = {
-  citizen: 'https://cdn-icons-png.flaticon.com/512/4478/4478351.png',
+  citizen: 'https://cdn-icons-png.flaticon.com/512/4478/4478351.png', 
   collector: 'https://img.icons8.com/fluency/48/garbage-truck.png',
   admin: 'https://img.icons8.com/emoji/48/man-office-worker.png'
 }

@@ -35,7 +35,7 @@ if (!deviceId) {
 const icons = {
   citizen: 'leaflet/images/userIcon.svg',
   collector: 'leaflet/images/collectorIcon.svg',
-  admin: '/icons/admin.png'
+  admin: '/icons/admin.png' 
 }
 
 async function loadAllMarkers() {

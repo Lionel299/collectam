@@ -35,7 +35,7 @@ if (!deviceId) {
 const icons = {
   citizen: '/icons/userIcon.svg',
   collector: '/icons/collectorIcon.svg',
-  admin: '/icons/admin.png' 
+  admin: '/icons/admin.png'
 }
 
 async function loadAllMarkers() {
@@ -47,24 +47,19 @@ async function loadAllMarkers() {
     locations.forEach(loc => {
       const el = document.createElement('div')
       el.className = 'marker'
-
-       console.log('icons:', icons)
-  console.log('loc.userType:', loc.userType)
       el.style.backgroundImage = `url(${icons[loc.userType] || icons.citizen})`
-
-
-      console.log("bonjour");
-      
       el.style.width = '30px'
       el.style.height = '40px'
       el.style.backgroundSize = 'contain'
       el.style.backgroundRepeat = 'no-repeat'
       el.style.cursor = 'pointer'
 
-      const marker = new maplibregl.Marker(el, { offset: [0, -20] }) // décalage vertical moitié hauteur négative
-  .setLngLat([loc.longitude, loc.latitude])
-  .setPopup(new maplibregl.Popup({ offset: 25 }).setText(`Device: ${loc.deviceId}\nType: ${loc.userType}`))
-  .addTo(map)
+      const marker = new maplibregl.Marker(el, { offset: [0, -20] })
+        .setLngLat([loc.longitude, loc.latitude])
+        .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML(
+          `<strong>Device:</strong> ${loc.deviceId}<br><strong>Type:</strong> ${loc.userType}`
+        ))
+        .addTo(map)
 
       allMarkers.push(marker)
     })
@@ -118,7 +113,7 @@ function localiseMoi() {
 
         myMarker = new maplibregl.Marker(el)
           .setLngLat([lng, lat])
-          .setPopup(new maplibregl.Popup({ offset: 25 }).setText('Vous êtes ici'))
+          .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML('<strong>Vous êtes ici</strong>'))
           .addTo(map)
       }
 
@@ -153,6 +148,7 @@ onBeforeUnmount(() => {
   if (map) map.remove()
 })
 </script>
+
 
 <style scoped>
 .localise-btn {

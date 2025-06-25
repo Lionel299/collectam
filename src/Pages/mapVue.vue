@@ -50,7 +50,8 @@ async function loadAllMarkers() {
 
        console.log('icons:', icons)
   console.log('loc.userType:', loc.userType)
-      el.style.backgroundImage = `url(${icons[loc.userType] || icons.citizen})`
+      el.style.backgroundImage = 'url(https://upload.wikimedia.org/wikipedia/commons/e/ec/RedDot.svg)'
+
       console.log("bonjour");
       
       el.style.width = '30px'

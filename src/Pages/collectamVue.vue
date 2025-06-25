@@ -27,8 +27,6 @@
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </section>
 
-    <!-- FORMULAIRE INSCRIPTION -->
-    <section v-else>
       <!-- Choix du rôle -->
       <section v-if="!roleSelected" class="role-selection">
         <h2>Choisissez votre rôle</h2>
@@ -88,11 +86,13 @@
           <label>Avez-vous un véhicule ?</label>
           <div>
             <label><input type="radio" value="oui" v-model="collectorData.hasVehicle" /> Oui</label>
-            <label style="margin-left: 20px;"><input type="radio" value="non" v-model="collectorData.hasVehicle" /> Non</label>
+            <label style="margin-left: 20px;"><input type="radio" value="non" v-model="collectorData.hasVehicle" />
+              Non</label>
           </div>
           <button type="button" :disabled="!collectorData.hasVehicle" @click="nextCollectorStep">Suivant</button>
         </div>
-        <form v-if="collectorStep === 2 && collectorData.hasVehicle === 'oui'" @submit.prevent="finishCollectorQuestions">
+        <form v-if="collectorStep === 2 && collectorData.hasVehicle === 'oui'"
+          @submit.prevent="finishCollectorQuestions">
           <div class="form-group">
             <label for="brand">Marque</label>
             <input id="brand" v-model="collectorData.vehicle.brand" type="text" required />
@@ -121,14 +121,20 @@
       <!-- Page de bienvenue -->
       <section v-else-if="registrationDone" class="welcome-page">
         <h2>Bienvenue sur notre application</h2>
-        <button @click="resetForm" class="back-btn">Retour à l'inscription</button>
+        <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+          <button @click="resetForm" class="back-btn">Retour à l'inscription</button>
+          <button @click="goToMap" class="back-btn">Aller à la map</button>
+        </div>
       </section>
-    </section>
+
   </div>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const role = ref('')
 const roleSelected = ref(false)
@@ -160,6 +166,15 @@ const form = reactive({
   phone: '',
   password: '',
 })
+
+const isLoading = ref(false)
+const apiUrl = process.env.VUE_APP_API_URL
+
+let deviceId = localStorage.getItem('deviceId')
+if (!deviceId) {
+  deviceId = Math.random().toString(36).substring(2)
+  localStorage.setItem('deviceId', deviceId)
+}
 
 function toggleLoginMode() {
   isLoginMode.value = !isLoginMode.value
@@ -248,10 +263,10 @@ async function submitForm() {
     hasVehicle: role.value === 'collector' ? collectorData.hasVehicle === 'oui' : undefined,
     vehicle: role.value === 'collector' && collectorData.hasVehicle === 'oui'
       ? {
-          brand: collectorData.vehicle.brand.trim(),
-          registration: collectorData.vehicle.registration.trim(),
-          maxWeight: collectorData.vehicle.maxWeight,
-        }
+        brand: collectorData.vehicle.brand.trim(),
+        registration: collectorData.vehicle.registration.trim(),
+        maxWeight: collectorData.vehicle.maxWeight,
+      }
       : undefined,
   }
 
@@ -308,6 +323,56 @@ async function submitLogin() {
     loading.value = false
   }
 }
+
+function goToMap() {
+  if (!role.value) {
+    errorMessage.value = "Veuillez sélectionner un rôle avant d'aller à la map."
+    return
+  }
+  if (!('geolocation' in navigator)) {
+    errorMessage.value = "La géolocalisation n'est pas supportée par ce navigateur."
+    return
+  }
+
+  isLoading.value = true
+  errorMessage.value = ''
+
+  navigator.geolocation.getCurrentPosition(
+    async position => {
+      const lat = position.coords.latitude
+      const lng = position.coords.longitude
+
+      try {
+        // Envoi au backend
+        const res = await fetch(`${apiUrl}/api/location/saveLocation`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            latitude: lat,
+            longitude: lng,
+            deviceId,      // récupéré comme dans ton code
+            userType: role.value
+          })
+        })
+        if (!res.ok) throw new Error('Erreur serveur lors de l’enregistrement')
+      } catch (err) {
+        errorMessage.value = "Impossible d'envoyer la position au serveur."
+        isLoading.value = false
+        return
+      }
+
+      isLoading.value = false
+      // Redirection vers la map avec le rôle en query param
+      router.push({ name: 'Map', query: { userType: role.value } })
+    },
+    error => {
+      errorMessage.value = "Erreur de géolocalisation : " + error.message
+      isLoading.value = false
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  )
+}
+
 </script>
 
 <style scoped>
@@ -321,21 +386,25 @@ async function submitLogin() {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #2c3e50;
 }
+
 h1 {
   text-align: center;
   margin-bottom: 25px;
   color: #16a085;
 }
+
 h2 {
   margin-bottom: 20px;
   color: #34495e;
   text-align: center;
 }
+
 .role-selection .roles {
   display: flex;
   justify-content: space-around;
   margin-top: 20px;
 }
+
 .role-selection button {
   background-color: #16a085;
   color: white;
@@ -347,22 +416,27 @@ h2 {
   transition: background-color 0.3s ease;
   width: 30%;
 }
+
 .role-selection button:hover {
   background-color: #13856e;
 }
+
 .registration-form form {
   display: flex;
   flex-direction: column;
 }
+
 .form-group {
   margin-bottom: 15px;
   display: flex;
   flex-direction: column;
 }
+
 label {
   font-weight: 600;
   margin-bottom: 6px;
 }
+
 input {
   padding: 10px;
   border: 1px solid #bdc3c7;
@@ -370,11 +444,13 @@ input {
   font-size: 1rem;
   transition: border-color 0.3s ease;
 }
+
 input:focus {
   outline: none;
   border-color: #16a085;
   box-shadow: 0 0 5px #16a085aa;
 }
+
 button[type="submit"],
 button[type="button"] {
   margin-top: 10px;
@@ -390,27 +466,32 @@ button[type="button"] {
   width: fit-content;
   align-self: center;
 }
+
 button[type="submit"]:disabled,
 button[type="button"]:disabled {
   background-color: #95a5a6;
   cursor: not-allowed;
 }
+
 button[type="submit"]:hover:not(:disabled),
 button[type="button"]:hover:not(:disabled) {
   background-color: #13856e;
 }
+
 .success {
   color: #27ae60;
   margin-top: 12px;
   font-weight: 600;
   text-align: center;
 }
+
 .error {
   color: #c0392b;
   margin-top: 12px;
   font-weight: 600;
   text-align: center;
 }
+
 .back-btn {
   margin-top: 20px;
   background: none;
@@ -422,9 +503,11 @@ button[type="button"]:hover:not(:disabled) {
   text-align: center;
   width: 100%;
 }
+
 .back-btn:hover {
   color: #13856e;
 }
+
 .welcome-page {
   text-align: center;
   margin-top: 50px;

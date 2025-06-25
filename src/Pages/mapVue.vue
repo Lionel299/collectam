@@ -10,6 +10,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
@@ -21,6 +22,8 @@ let myMarker = null
 const allMarkers = []
 const errorMessage = ref('')
 const isLoading = ref(false)
+const route = useRoute()
+const userType = ref(route.query.userType || 'citizen')
 
 let deviceId = localStorage.getItem('deviceId')
 if (!deviceId) {
@@ -28,7 +31,13 @@ if (!deviceId) {
   localStorage.setItem('deviceId', deviceId)
 }
 
-// Charger et afficher tous les marqueurs depuis l'API
+// Icônes locales dans public/icons/
+const icons = {
+  citizen: '/icons/userIcon.svg',
+  collector: '/icons/collectorIcon.svg',
+  admin: '/icons/admin.png'
+}
+
 async function loadAllMarkers() {
   try {
     const res = await fetch(`${apiUrl}/api/location/all`)
@@ -38,15 +47,16 @@ async function loadAllMarkers() {
     locations.forEach(loc => {
       const el = document.createElement('div')
       el.className = 'marker'
-      el.style.backgroundImage = 'url(https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png)'
-      el.style.width = '25px'
-      el.style.height = '41px'
+      el.style.backgroundImage = `url(${icons[loc.userType] || icons.citizen})`
+      el.style.width = '30px'
+      el.style.height = '40px'
       el.style.backgroundSize = 'contain'
+      el.style.backgroundRepeat = 'no-repeat'
       el.style.cursor = 'pointer'
 
       const marker = new maplibregl.Marker(el)
         .setLngLat([loc.longitude, loc.latitude])
-        .setPopup(new maplibregl.Popup({ offset: 25 }).setText(`Device: ${loc.deviceId}`))
+        .setPopup(new maplibregl.Popup({ offset: 25 }).setText(`Device: ${loc.deviceId}\nType: ${loc.userType}`))
         .addTo(map)
       allMarkers.push(marker)
     })
@@ -56,7 +66,6 @@ async function loadAllMarkers() {
   }
 }
 
-// Fonction pour géolocaliser l'utilisateur et afficher/mettre à jour son marker
 function localiseMoi() {
   if (!('geolocation' in navigator)) {
     errorMessage.value = "La géolocalisation n'est pas supportée par ce navigateur."
@@ -75,7 +84,7 @@ function localiseMoi() {
         const res = await fetch(`${apiUrl}/api/location/saveLocation`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ latitude: lat, longitude: lng, deviceId })
+          body: JSON.stringify({ latitude: lat, longitude: lng, deviceId, userType: userType.value })
         })
         if (!res.ok) throw new Error('Erreur serveur lors de l’enregistrement')
       } catch (err) {
@@ -87,13 +96,16 @@ function localiseMoi() {
 
       if (myMarker) {
         myMarker.setLngLat([lng, lat])
+        const el = myMarker.getElement()
+        el.style.backgroundImage = `url(${icons[userType.value]})`
       } else {
         const el = document.createElement('div')
         el.className = 'marker'
-        el.style.backgroundImage = 'url(https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png)'
-        el.style.width = '25px'
-        el.style.height = '41px'
+        el.style.backgroundImage = `url(${icons[userType.value]})`
+        el.style.width = '30px'
+        el.style.height = '40px'
         el.style.backgroundSize = 'contain'
+        el.style.backgroundRepeat = 'no-repeat'
         el.style.cursor = 'pointer'
 
         myMarker = new maplibregl.Marker(el)
@@ -116,13 +128,13 @@ function localiseMoi() {
 onMounted(() => {
   map = new maplibregl.Map({
     container: mapContainer.value,
-    style: 'https://api.maptiler.com/maps/0197a6fb-a81a-7f50-8d0f-aae437805f0e/style.json?key=DvJJUZaEy1icy86CXLTL', // Ton style MapTiler
+    style: 'https://api.maptiler.com/maps/0197a6fb-a81a-7f50-8d0f-aae437805f0e/style.json?key=DvJJUZaEy1icy86CXLTL',
     center: [0, 0],
     zoom: 2
   })
 
-    map.on('style.load', () => {
-    map.setProjection({ type: 'globe' })  // Active la projection globe
+  map.on('style.load', () => {
+    map.setProjection({ type: 'globe' })
     loadAllMarkers()
   })
 })
@@ -134,10 +146,10 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style>
+<style scoped>
 .localise-btn {
   background-color: #1976d2;
-  color: #fff;
+  color: white;
   border: none;
   padding: 12px 28px;
   border-radius: 8px;
@@ -157,7 +169,11 @@ onBeforeUnmount(() => {
   opacity: 0.6;
 }
 .marker {
+  width: 30px;
+  height: 40px;
+  background-size: contain;
   background-repeat: no-repeat;
   cursor: pointer;
 }
 </style>
+

@@ -33,8 +33,8 @@ if (!deviceId) {
 
 // Icônes locales dans public/icons/
 const icons = {
-  citizen: 'leaflet/images/userIcon.svg',
-  collector: 'leaflet/images/collectorIcon.svg',
+  citizen: '/icons/userIcon.svg',
+  collector: '/icons/collectorIcon.svg',
   admin: '/icons/admin.png' 
 }
 

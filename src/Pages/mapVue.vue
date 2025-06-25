@@ -4,34 +4,23 @@
       {{ isLoading ? 'Localisation en cours...' : 'Localise moi' }}
     </button>
     <div ref="mapContainer" style="height: 500px; margin-top:10px;"></div>
-    <div v-if="errorMessage" style="color: red;">{{ errorMessage }}</div>
+    <div v-if="errorMessage" style="color: red; margin-top: 10px;">{{ errorMessage }}</div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-import markerIconPng from 'leaflet/dist/images/marker-icon.png'
-import markerShadowPng from 'leaflet/dist/images/marker-shadow.png'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import maplibregl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
 
 const apiUrl = process.env.VUE_APP_API_URL
 
 const mapContainer = ref(null)
-const map = ref(null)
-const myMarker = ref(null)
-const allMarkers = ref([]) // Pour stocker tous les marqueurs affichés
+let map = null
+let myMarker = null
+const allMarkers = []
 const errorMessage = ref('')
 const isLoading = ref(false)
-
-const defaultIcon = L.icon({
-  iconUrl: markerIconPng,
-  shadowUrl: markerShadowPng,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-})
 
 let deviceId = localStorage.getItem('deviceId')
 if (!deviceId) {
@@ -39,17 +28,27 @@ if (!deviceId) {
   localStorage.setItem('deviceId', deviceId)
 }
 
-// Charger toutes les positions existantes et les afficher sur la carte
+// Charger et afficher tous les marqueurs depuis l'API
 async function loadAllMarkers() {
   try {
     const res = await fetch(`${apiUrl}/api/location/all`)
     if (!res.ok) throw new Error('Erreur lors du chargement des positions')
     const locations = await res.json()
+
     locations.forEach(loc => {
-      const marker = L.marker([loc.latitude, loc.longitude], { icon: defaultIcon })
-        .addTo(map.value)
-        .bindPopup(`Device: ${loc.deviceId}`)
-      allMarkers.value.push(marker)
+      const el = document.createElement('div')
+      el.className = 'marker'
+      el.style.backgroundImage = 'url(https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png)'
+      el.style.width = '25px'
+      el.style.height = '41px'
+      el.style.backgroundSize = 'contain'
+      el.style.cursor = 'pointer'
+
+      const marker = new maplibregl.Marker(el)
+        .setLngLat([loc.longitude, loc.latitude])
+        .setPopup(new maplibregl.Popup({ offset: 25 }).setText(`Device: ${loc.deviceId}`))
+        .addTo(map)
+      allMarkers.push(marker)
     })
   } catch (err) {
     errorMessage.value = "Impossible de charger les positions existantes."
@@ -57,6 +56,7 @@ async function loadAllMarkers() {
   }
 }
 
+// Fonction pour géolocaliser l'utilisateur et afficher/mettre à jour son marker
 function localiseMoi() {
   if (!('geolocation' in navigator)) {
     errorMessage.value = "La géolocalisation n'est pas supportée par ce navigateur."
@@ -85,16 +85,24 @@ function localiseMoi() {
         return
       }
 
-      // Ajouter ou mettre à jour le marqueur de l’utilisateur
-      if (myMarker.value) {
-        myMarker.value.setLatLng([lat, lng])
+      if (myMarker) {
+        myMarker.setLngLat([lng, lat])
       } else {
-        myMarker.value = L.marker([lat, lng], { icon: defaultIcon })
-          .addTo(map.value)
-          .bindPopup('Vous êtes ici')
-          .openPopup()
+        const el = document.createElement('div')
+        el.className = 'marker'
+        el.style.backgroundImage = 'url(https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png)'
+        el.style.width = '25px'
+        el.style.height = '41px'
+        el.style.backgroundSize = 'contain'
+        el.style.cursor = 'pointer'
+
+        myMarker = new maplibregl.Marker(el)
+          .setLngLat([lng, lat])
+          .setPopup(new maplibregl.Popup({ offset: 25 }).setText('Vous êtes ici'))
+          .addTo(map)
       }
-      map.value.setView([lat, lng], 16)
+
+      map.flyTo({ center: [lng, lat], zoom: 16 })
       isLoading.value = false
     },
     error => {
@@ -105,13 +113,23 @@ function localiseMoi() {
   )
 }
 
-onMounted(async () => {
-  await nextTick()
-  map.value = L.map(mapContainer.value, { zoomAnimation: false }).setView([0, 0], 2)
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map.value)
-  await loadAllMarkers()
+onMounted(() => {
+  map = new maplibregl.Map({
+    container: mapContainer.value,
+    style: 'https://api.maptiler.com/maps/0197a6fb-a81a-7f50-8d0f-aae437805f0e/style.json?key=DvJJUZaEy1icy86CXLTL', // Ton style MapTiler
+    center: [0, 0],
+    zoom: 2
+  })
+
+  map.on('load', () => {
+    loadAllMarkers()
+  })
+})
+
+onBeforeUnmount(() => {
+  allMarkers.forEach(m => m.remove())
+  if (myMarker) myMarker.remove()
+  if (map) map.remove()
 })
 </script>
 
@@ -136,5 +154,9 @@ onMounted(async () => {
 .localise-btn:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+.marker {
+  background-repeat: no-repeat;
+  cursor: pointer;
 }
 </style>

@@ -2,15 +2,14 @@
   <div class="container">
     <h1>Gestion des utilisateurs</h1>
 
-    <!-- Si utilisateur connecté -->
-    <section v-if="isAuthenticated" class="welcome-user">
-      <p>Bienvenue, {{ user.firstName }} ({{ user.role }}) !</p>
-      <button @click="logout" class="back-btn">Déconnexion</button>
-    </section>
+    <!-- Bouton bascule inscription/connexion -->
+    <button @click="toggleLoginMode" class="back-btn" style="margin-bottom: 20px;">
+      {{ isLoginMode ? "Créer un compte" : "J'ai déjà un compte" }}
+    </button>
 
-    <!-- Connexion rapide au choix du rôle -->
-    <section v-else-if="showLoginAtRoleSelection" class="login-form">
-      <h2>Connexion rapide</h2>
+    <!-- FORMULAIRE CONNEXION -->
+    <section v-if="isLoginMode" class="registration-form">
+      <h2>Connexion</h2>
       <form @submit.prevent="submitLogin">
         <div class="form-group">
           <label for="loginEmail">Adresse e-mail</label>
@@ -26,125 +25,125 @@
       </form>
       <p v-if="successMessage" class="success">{{ successMessage }}</p>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-      <button class="back-btn" @click="toggleLoginAtRoleSelection(false)">Retour au choix du rôle</button>
     </section>
 
-    <!-- Choix du rôle -->
-    <section v-else-if="!roleSelected" class="role-selection">
-      <h2>Choisissez votre rôle</h2>
-      <div class="roles">
-        <button @click="selectRole('citizen')">Citoyen</button>
-        <button @click="selectRole('collector')">Collecteur</button>
-        <button @click="selectRole('admin')">Admin</button>
-      </div>
-      <button class="back-btn" @click="toggleLoginAtRoleSelection(true)" style="margin-top: 20px;">
-        Vous avez déjà un compte ? Connectez-vous ici
-      </button>
-    </section>
+      <!-- Choix du rôle -->
+      <section v-if="!roleSelected" class="role-selection">
+        <h2>Choisissez votre rôle</h2>
+        <div class="roles">
+          <button @click="selectRole('citizen')">Citoyen</button>
+          <button @click="selectRole('collector')">Collecteur</button>
+          <button @click="selectRole('admin')">Admin</button>
+        </div>
+      </section>
 
-    <!-- Formulaire inscription citoyen/admin -->
-    <section v-else-if="(role !== 'collector' || showUserForm) && !registrationDone" class="registration-form">
-      <h2>Inscription en tant que <span class="role">{{ role }}</span></h2>
-      <form @submit.prevent="submitForm">
-        <div class="form-group">
-          <label for="firstName">Prénom</label>
-          <input id="firstName" v-model="form.firstName" type="text" required />
-        </div>
-        <div class="form-group">
-          <label for="lastName">Nom</label>
-          <input id="lastName" v-model="form.lastName" type="text" required />
-        </div>
-        <div class="form-group">
-          <label for="email">Adresse e-mail</label>
-          <input id="email" v-model="form.email" type="email" required />
-        </div>
-        <div class="form-group">
-          <label for="address">Adresse</label>
-          <input id="address" v-model="form.address" type="text" required />
-        </div>
-        <div class="form-group">
-          <label for="neighborhood">Quartier</label>
-          <input id="neighborhood" v-model="form.neighborhood" type="text" required />
-        </div>
-        <div class="form-group">
-          <label for="phone">Numéro de téléphone</label>
-          <input id="phone" v-model="form.phone" type="tel" required pattern="^\+?\d{7,15}$" />
-          <small>Format attendu : chiffres, avec option + au début</small>
-        </div>
-        <div class="form-group">
-          <label for="password">Mot de passe</label>
-          <input id="password" v-model="form.password" type="password" minlength="6" required />
-        </div>
-        <button type="submit" :disabled="loading">
-          {{ loading ? 'Enregistrement...' : "S'inscrire" }}
-        </button>
-      </form>
-      <p v-if="successMessage" class="success">{{ successMessage }}</p>
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-      <button @click="resetForm" class="back-btn">Changer de rôle</button>
-    </section>
+      <!-- Formulaire citoyen/admin -->
+      <section v-else-if="(role !== 'collector' || showUserForm) && !registrationDone" class="registration-form">
+        <h2>Inscription en tant que <span class="role">{{ role }}</span></h2>
+        <form @submit.prevent="submitForm">
+          <div class="form-group">
+            <label for="firstName">Prénom</label>
+            <input id="firstName" v-model="form.firstName" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Nom</label>
+            <input id="lastName" v-model="form.lastName" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Adresse e-mail</label>
+            <input id="email" v-model="form.email" type="email" required />
+          </div>
+          <div class="form-group">
+            <label for="address">Adresse</label>
+            <input id="address" v-model="form.address" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="neighborhood">Quartier</label>
+            <input id="neighborhood" v-model="form.neighborhood" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">Numéro de téléphone</label>
+            <input id="phone" v-model="form.phone" type="tel" required pattern="^\+?\d{7,15}$" />
+            <small>Format attendu : chiffres, avec option + au début</small>
+          </div>
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input id="password" v-model="form.password" type="password" minlength="6" required />
+          </div>
+          <button type="submit" :disabled="loading">
+            {{ loading ? 'Enregistrement...' : "S'inscrire" }}
+          </button>
+        </form>
+        <p v-if="successMessage" class="success">{{ successMessage }}</p>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+        <button @click="resetForm" class="back-btn">Changer de rôle</button>
+      </section>
 
-    <!-- Collecteur : questionnaire véhicule -->
-    <section v-else-if="role === 'collector' && !showUserForm && !registrationDone" class="registration-form">
-      <h2>Inscription Collecteur - Étape {{ collectorStep }}</h2>
-      <div v-if="collectorStep === 1" class="form-group">
-        <label>Avez-vous un véhicule ?</label>
-        <div>
-          <label><input type="radio" value="oui" v-model="collectorData.hasVehicle" /> Oui</label>
-          <label style="margin-left: 20px;"><input type="radio" value="non" v-model="collectorData.hasVehicle" /> Non</label>
+      <!-- Collecteur : questionnaire véhicule -->
+      <section v-else-if="role === 'collector' && !showUserForm && !registrationDone" class="registration-form">
+        <h2>Inscription Collecteur - Étape {{ collectorStep }}</h2>
+        <div v-if="collectorStep === 1" class="form-group">
+          <label>Avez-vous un véhicule ?</label>
+          <div>
+            <label><input type="radio" value="oui" v-model="collectorData.hasVehicle" /> Oui</label>
+            <label style="margin-left: 20px;"><input type="radio" value="non" v-model="collectorData.hasVehicle" />
+              Non</label>
+          </div>
+          <button type="button" :disabled="!collectorData.hasVehicle" @click="nextCollectorStep">Suivant</button>
         </div>
-        <button type="button" :disabled="!collectorData.hasVehicle" @click="nextCollectorStep">Suivant</button>
-      </div>
-      <form v-if="collectorStep === 2 && collectorData.hasVehicle === 'oui'" @submit.prevent="finishCollectorQuestions">
-        <div class="form-group">
-          <label for="brand">Marque</label>
-          <input id="brand" v-model="collectorData.vehicle.brand" type="text" required />
+        <form v-if="collectorStep === 2 && collectorData.hasVehicle === 'oui'"
+          @submit.prevent="finishCollectorQuestions">
+          <div class="form-group">
+            <label for="brand">Marque</label>
+            <input id="brand" v-model="collectorData.vehicle.brand" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="registration">Immatriculation</label>
+            <input id="registration" v-model="collectorData.vehicle.registration" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="maxWeight">Poids maximum (kg)</label>
+            <input id="maxWeight" v-model.number="collectorData.vehicle.maxWeight" type="number" min="0" required />
+          </div>
+          <button type="submit" :disabled="loading">
+            {{ loading ? 'Chargement...' : 'Terminé' }}
+          </button>
+        </form>
+        <div v-if="collectorStep === 2 && collectorData.hasVehicle === 'non'">
+          <button @click="finishCollectorQuestions" :disabled="loading">
+            {{ loading ? 'Chargement...' : 'Terminé' }}
+          </button>
         </div>
-        <div class="form-group">
-          <label for="registration">Immatriculation</label>
-          <input id="registration" v-model="collectorData.vehicle.registration" type="text" required />
-        </div>
-        <div class="form-group">
-          <label for="maxWeight">Poids maximum (kg)</label>
-          <input id="maxWeight" v-model.number="collectorData.vehicle.maxWeight" type="number" min="0" required />
-        </div>
-        <button type="submit" :disabled="loading">
-          {{ loading ? 'Chargement...' : 'Terminé' }}
-        </button>
-      </form>
-      <div v-if="collectorStep === 2 && collectorData.hasVehicle === 'non'">
-        <button @click="finishCollectorQuestions" :disabled="loading">
-          {{ loading ? 'Chargement...' : 'Terminé' }}
-        </button>
-      </div>
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-      <button @click="resetForm" class="back-btn">Changer de rôle</button>
-    </section>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+        <button @click="resetForm" class="back-btn">Changer de rôle</button>
+      </section>
 
-    <!-- Page de bienvenue -->
-    <section v-else-if="registrationDone" class="welcome-page">
-      <h2>Bienvenue sur notre application</h2>
-      <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
-        <button @click="resetForm" class="back-btn">Retour à l'inscription</button>
-        <button @click="goToMap" class="back-btn">Aller à la map</button>
-      </div>
-    </section>
+      <!-- Page de bienvenue -->
+      <section v-else-if="registrationDone" class="welcome-page">
+        <h2>Bienvenue sur notre application</h2>
+        <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+          <button @click="resetForm" class="back-btn">Retour à l'inscription</button>
+          <button @click="goToMap" class="back-btn">Aller à la map</button>
+        </div>
+      </section>
+
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-// États principaux
 const role = ref('')
 const roleSelected = ref(false)
 const loading = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
 const registrationDone = ref(false)
+
+const isLoginMode = ref(false)
 
 const collectorStep = ref(1)
 const collectorData = reactive({
@@ -169,15 +168,7 @@ const form = reactive({
 })
 
 const isLoading = ref(false)
-const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:3000'
-
-// Gestion session
-const token = ref(localStorage.getItem('token') || null)
-const user = ref(JSON.parse(localStorage.getItem('user')) || null)
-const isAuthenticated = computed(() => !!token.value)
-
-// Affichage connexion rapide au choix du rôle
-const showLoginAtRoleSelection = ref(false)
+const apiUrl = process.env.VUE_APP_API_URL
 
 let deviceId = localStorage.getItem('deviceId')
 if (!deviceId) {
@@ -185,32 +176,11 @@ if (!deviceId) {
   localStorage.setItem('deviceId', deviceId)
 }
 
-// Fonctions session
-function saveSession(jwtToken, userData) {
-  token.value = jwtToken
-  user.value = userData
-  localStorage.setItem('token', jwtToken)
-  localStorage.setItem('user', JSON.stringify(userData))
-}
-
-function clearSession() {
-  token.value = null
-  user.value = null
-  localStorage.removeItem('token')
-  localStorage.removeItem('user')
-}
-
-// Gestion UI
-function toggleLoginAtRoleSelection(show) {
-  showLoginAtRoleSelection.value = show
+function toggleLoginMode() {
+  isLoginMode.value = !isLoginMode.value
   errorMessage.value = ''
   successMessage.value = ''
   Object.keys(form).forEach(key => form[key] = '')
-}
-
-function logout() {
-  clearSession()
-  resetForm()
   role.value = ''
   roleSelected.value = false
   registrationDone.value = false
@@ -220,10 +190,6 @@ function logout() {
   collectorData.vehicle.registration = ''
   collectorData.vehicle.maxWeight = null
   showUserForm.value = false
-  Object.keys(form).forEach(key => form[key] = '')
-  showLoginAtRoleSelection.value = false
-
-  router.push({ name: 'login' }) // adapte selon ta route
 }
 
 function selectRole(selectedRole) {
@@ -239,7 +205,6 @@ function selectRole(selectedRole) {
   collectorData.vehicle.maxWeight = null
   showUserForm.value = false
   Object.keys(form).forEach(key => form[key] = '')
-  showLoginAtRoleSelection.value = false
 }
 
 function resetForm() {
@@ -255,7 +220,7 @@ function resetForm() {
   collectorData.vehicle.maxWeight = null
   showUserForm.value = false
   Object.keys(form).forEach(key => form[key] = '')
-  showLoginAtRoleSelection.value = false
+  isLoginMode.value = false
 }
 
 function nextCollectorStep() {
@@ -275,7 +240,6 @@ function finishCollectorQuestions() {
   showUserForm.value = true
 }
 
-// Inscription
 async function submitForm() {
   loading.value = true
   successMessage.value = ''
@@ -327,7 +291,6 @@ async function submitForm() {
   }
 }
 
-// Connexion
 async function submitLogin() {
   loading.value = true
   successMessage.value = ''
@@ -350,13 +313,9 @@ async function submitLogin() {
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.error || 'Erreur lors de la connexion')
-
-    saveSession(data.token, data.user)
-
     successMessage.value = 'Connexion réussie !'
     errorMessage.value = ''
-
-    router.push({ name: 'map', query: { userType: data.user.role } })
+    // Ici tu peux stocker le token ou rediriger l'utilisateur
   } catch (err) {
     errorMessage.value = err.message
     successMessage.value = ''
@@ -365,7 +324,6 @@ async function submitLogin() {
   }
 }
 
-// Redirection vers la map avec géolocalisation
 function goToMap() {
   if (!role.value) {
     errorMessage.value = "Veuillez sélectionner un rôle avant d'aller à la map."
@@ -385,13 +343,14 @@ function goToMap() {
       const lng = position.coords.longitude
 
       try {
+        // Envoi au backend
         const res = await fetch(`${apiUrl}/api/location/saveLocation`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             latitude: lat,
             longitude: lng,
-            deviceId,
+            deviceId,      // récupéré comme dans ton code
             userType: role.value
           })
         })
@@ -403,6 +362,7 @@ function goToMap() {
       }
 
       isLoading.value = false
+      // Redirection vers la map avec le rôle en query param
       router.push({ name: 'map', query: { userType: role.value } })
     },
     error => {
@@ -412,163 +372,8 @@ function goToMap() {
     { enableHighAccuracy: true, timeout: 10000 }
   )
 }
+
 </script>
-
-
-<style scoped>
-.container {
-  max-width: 480px;
-  margin: 40px auto;
-  background: #f9fafb;
-  padding: 25px 30px;
-  border-radius: 10px;
-  box-shadow: 0 6px 15px rgb(0 0 0 / 0.1);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #2c3e50;
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 25px;
-  color: #16a085;
-}
-
-h2 {
-  margin-bottom: 20px;
-  color: #34495e;
-  text-align: center;
-}
-
-.role-selection .roles {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-}
-
-.role-selection button {
-  background-color: #16a085;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  width: 30%;
-}
-
-.role-selection button:hover {
-  background-color: #13856e;
-}
-
-.registration-form form,
-.login-form form {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group {
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
-}
-
-label {
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-input {
-  padding: 10px;
-  border: 1px solid #bdc3c7;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-}
-
-input:focus {
-  outline: none;
-  border-color: #16a085;
-  box-shadow: 0 0 5px #16a085aa;
-}
-
-button[type="submit"],
-button[type="button"] {
-  margin-top: 10px;
-  background-color: #16a085;
-  color: white;
-  font-weight: 700;
-  font-size: 1.1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  padding: 12px;
-  transition: background-color 0.3s ease;
-  width: fit-content;
-  align-self: center;
-}
-
-button[type="submit"]:disabled,
-button[type="button"]:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
-}
-
-button[type="submit"]:hover:not(:disabled),
-button[type="button"]:hover:not(:disabled) {
-  background-color: #13856e;
-}
-
-.success {
-  color: #27ae60;
-  margin-top: 12px;
-  font-weight: 600;
-  text-align: center;
-}
-
-.error {
-  color: #c0392b;
-  margin-top: 12px;
-  font-weight: 600;
-  text-align: center;
-}
-
-.back-btn {
-  margin-top: 20px;
-  background: none;
-  border: none;
-  color: #16a085;
-  cursor: pointer;
-  font-weight: 600;
-  text-decoration: underline;
-  text-align: center;
-  width: 100%;
-}
-
-.back-btn:hover {
-  color: #13856e;
-}
-
-.welcome-page {
-  text-align: center;
-  margin-top: 50px;
-  font-size: 1.5rem;
-  color: #16a085;
-}
-
-.welcome-user {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 1.2rem;
-  color: #16a085;
-}
-
-.roles button {
-  min-width: 100px;
-}
-</style>
-
-
 
 <style scoped>
 .container {

@@ -33,7 +33,7 @@ if (!deviceId) {
 
 // Icônes hébergées en ligne (exemple via icons8 ou autre CDN libre)
 const icons = {
-  citizen: 'https://cdn-icons-png.flaticon.com/512/4478/4478351.png', 
+  citizen: 'https://cdn-icons-png.flaticon.com/512/4478/4478351.png',
   collector: 'https://img.icons8.com/fluency/48/garbage-truck.png',
   admin: 'https://img.icons8.com/emoji/48/man-office-worker.png'
 }
@@ -99,8 +99,6 @@ function localiseMoi() {
 
       if (myMarker) {
         myMarker.setLngLat([lng, lat])
-        const el = myMarker.getElement()
-        el.style.backgroundImage = `url(${icons[userType.value]})`
       } else {
         const el = document.createElement('div')
         el.className = 'marker'
@@ -165,14 +163,17 @@ onBeforeUnmount(() => {
   transition: background 0.2s, transform 0.2s;
   margin-bottom: 10px;
 }
+
 .localise-btn:hover:enabled {
   background-color: #1565c0;
   transform: translateY(-2px) scale(1.03);
 }
+
 .localise-btn:disabled {
   cursor: not-allowed;
   opacity: 0.6;
 }
+
 .marker {
   width: 30px;
   height: 40px;
@@ -182,4 +183,3 @@ onBeforeUnmount(() => {
   position: relative;
 }
 </style>
-

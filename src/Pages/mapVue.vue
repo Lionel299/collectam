@@ -181,5 +181,8 @@ onBeforeUnmount(() => {
   background-repeat: no-repeat;
   cursor: pointer;
   position: relative;
+  background-position: center;
+  background-color: transparent;
+  border-radius: 0;
 }
 </style>

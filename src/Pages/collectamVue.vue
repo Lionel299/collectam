@@ -138,6 +138,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+// États principaux
 const role = ref('')
 const roleSelected = ref(false)
 const loading = ref(false)
@@ -168,13 +169,7 @@ const form = reactive({
 })
 
 const isLoading = ref(false)
-const apiUrl = process.env.VUE_APP_API_URL
-
-let deviceId = localStorage.getItem('deviceId')
-if (!deviceId) {
-  deviceId = Math.random().toString(36).substring(2)
-  localStorage.setItem('deviceId', deviceId)
-}
+const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:3000'
 
 // Gestion session
 const token = ref(localStorage.getItem('token') || null)
@@ -184,6 +179,13 @@ const isAuthenticated = computed(() => !!token.value)
 // Affichage connexion rapide au choix du rôle
 const showLoginAtRoleSelection = ref(false)
 
+let deviceId = localStorage.getItem('deviceId')
+if (!deviceId) {
+  deviceId = Math.random().toString(36).substring(2)
+  localStorage.setItem('deviceId', deviceId)
+}
+
+// Fonctions session
 function saveSession(jwtToken, userData) {
   token.value = jwtToken
   user.value = userData
@@ -198,6 +200,7 @@ function clearSession() {
   localStorage.removeItem('user')
 }
 
+// Gestion UI
 function toggleLoginAtRoleSelection(show) {
   showLoginAtRoleSelection.value = show
   errorMessage.value = ''
@@ -272,6 +275,7 @@ function finishCollectorQuestions() {
   showUserForm.value = true
 }
 
+// Inscription
 async function submitForm() {
   loading.value = true
   successMessage.value = ''
@@ -323,6 +327,7 @@ async function submitForm() {
   }
 }
 
+// Connexion
 async function submitLogin() {
   loading.value = true
   successMessage.value = ''
@@ -360,6 +365,7 @@ async function submitLogin() {
   }
 }
 
+// Redirection vers la map avec géolocalisation
 function goToMap() {
   if (!role.value) {
     errorMessage.value = "Veuillez sélectionner un rôle avant d'aller à la map."
@@ -407,6 +413,7 @@ function goToMap() {
   )
 }
 </script>
+
 
 <style scoped>
 .container {

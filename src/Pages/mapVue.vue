@@ -30,7 +30,7 @@ if (!deviceId) {
   localStorage.setItem('deviceId', deviceId)
 }
 const icons = {
-  citizen: 'https://www.flaticon.com/fr/icone-gratuite/utilisateur_17268571?term=user&page=1&position=49&origin=search&related_id=17268571',
+  citizen: 'https://www.svgrepo.com/show/530412/user.svg',
   collector: 'https://cdn-icons-png.flaticon.com/512/4478/4478351.png',
   admin: 'https://img.icons8.com/emoji/48/man-office-worker.png'
 }

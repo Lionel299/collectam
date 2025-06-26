@@ -8,6 +8,7 @@
   </div>
 </template>
 
+
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
@@ -15,7 +16,6 @@ import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:3000'
-
 const mapContainer = ref(null)
 let map = null
 let myMarker = null
@@ -24,14 +24,11 @@ const errorMessage = ref('')
 const isLoading = ref(false)
 const route = useRoute()
 const userType = ref(route.query.userType || 'citizen')
-
 let deviceId = localStorage.getItem('deviceId')
 if (!deviceId) {
   deviceId = Math.random().toString(36).substring(2)
   localStorage.setItem('deviceId', deviceId)
 }
-
-// Icônes hébergées en ligne (exemple via icons8 ou autre CDN libre)
 const icons = {
   citizen: 'https://cdn-icons-png.flaticon.com/512/4478/4478351.png',
   collector: 'https://img.icons8.com/fluency/48/garbage-truck.png',
@@ -43,7 +40,6 @@ async function loadAllMarkers() {
     const res = await fetch(`${apiUrl}/api/location/all`)
     if (!res.ok) throw new Error('Erreur lors du chargement des positions')
     const locations = await res.json()
-
     locations.forEach(loc => {
       const el = document.createElement('div')
       el.className = 'marker'
@@ -54,13 +50,12 @@ async function loadAllMarkers() {
       el.style.backgroundRepeat = 'no-repeat'
       el.style.cursor = 'pointer'
 
-      const marker = new maplibregl.Marker(el, { offset: [0, -20] })
+      const marker = new maplibregl.Marker({ element: el, offset: [0, -20] })
         .setLngLat([loc.longitude, loc.latitude])
         .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML(
           `<strong>Device:</strong> ${loc.deviceId}<br><strong>Type:</strong> ${loc.userType}`
         ))
         .addTo(map)
-
       allMarkers.push(marker)
     })
   } catch (err) {
@@ -109,7 +104,7 @@ function localiseMoi() {
         el.style.backgroundRepeat = 'no-repeat'
         el.style.cursor = 'pointer'
 
-        myMarker = new maplibregl.Marker(el)
+        myMarker = new maplibregl.Marker({ element: el })
           .setLngLat([lng, lat])
           .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML('<strong>Vous êtes ici</strong>'))
           .addTo(map)
@@ -146,6 +141,18 @@ onBeforeUnmount(() => {
   if (map) map.remove()
 })
 </script>
+
+<style>
+.marker {
+  display: block;
+  width: 30px;
+  height: 40px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+</style>
+
 
 
 

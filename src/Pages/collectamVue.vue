@@ -142,10 +142,15 @@ const loading = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
 const registrationDone = ref(false)
-
 const isLoginMode = ref(false)
-
 const collectorStep = ref(1)
+const showUserForm = ref(false)
+const isLoading = ref(false)
+
+// ✅ Fallback pour apiUrl
+const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:3000'
+
+// 📦 Données collecteur
 const collectorData = reactive({
   hasVehicle: '',
   vehicle: {
@@ -155,8 +160,7 @@ const collectorData = reactive({
   },
 })
 
-const showUserForm = ref(false)
-
+// 📦 Données formulaire utilisateur
 const form = reactive({
   firstName: '',
   lastName: '',
@@ -167,28 +171,36 @@ const form = reactive({
   password: '',
 })
 
-const isLoading = ref(false)
-const apiUrl = process.env.VUE_APP_API_URL
-
+// 📦 Device ID stocké en local
 let deviceId = localStorage.getItem('deviceId')
 if (!deviceId) {
   deviceId = Math.random().toString(36).substring(2)
   localStorage.setItem('deviceId', deviceId)
 }
 
-function toggleLoginMode() {
-  isLoginMode.value = !isLoginMode.value
-  errorMessage.value = ''
-  successMessage.value = ''
-  Object.keys(form).forEach(key => form[key] = '')
-  role.value = ''
-  roleSelected.value = false
-  registrationDone.value = false
-  collectorStep.value = 1
+// ✅ Reset des données collecteur factorisé
+function resetCollectorData() {
   collectorData.hasVehicle = ''
   collectorData.vehicle.brand = ''
   collectorData.vehicle.registration = ''
   collectorData.vehicle.maxWeight = null
+}
+
+// ✅ Reset des données formulaire utilisateur
+function resetFormData() {
+  Object.keys(form).forEach(key => form[key] = '')
+}
+
+function toggleLoginMode() {
+  isLoginMode.value = !isLoginMode.value
+  errorMessage.value = ''
+  successMessage.value = ''
+  resetFormData()
+  resetCollectorData()
+  role.value = ''
+  roleSelected.value = false
+  registrationDone.value = false
+  collectorStep.value = 1
   showUserForm.value = false
 }
 
@@ -199,12 +211,9 @@ function selectRole(selectedRole) {
   errorMessage.value = ''
   registrationDone.value = false
   collectorStep.value = 1
-  collectorData.hasVehicle = ''
-  collectorData.vehicle.brand = ''
-  collectorData.vehicle.registration = ''
-  collectorData.vehicle.maxWeight = null
+  resetCollectorData()
   showUserForm.value = false
-  Object.keys(form).forEach(key => form[key] = '')
+  resetFormData()
 }
 
 function resetForm() {
@@ -214,12 +223,9 @@ function resetForm() {
   errorMessage.value = ''
   registrationDone.value = false
   collectorStep.value = 1
-  collectorData.hasVehicle = ''
-  collectorData.vehicle.brand = ''
-  collectorData.vehicle.registration = ''
-  collectorData.vehicle.maxWeight = null
+  resetCollectorData()
   showUserForm.value = false
-  Object.keys(form).forEach(key => form[key] = '')
+  resetFormData()
   isLoginMode.value = false
 }
 
@@ -251,6 +257,9 @@ async function submitForm() {
     return
   }
 
+  // ✅ Nettoyage numéro de téléphone
+  const cleanPhone = form.phone.replace(/\D/g, '')
+
   const payload = {
     role: role.value,
     firstName: form.firstName.trim(),
@@ -258,7 +267,7 @@ async function submitForm() {
     email: form.email.trim(),
     address: form.address.trim(),
     neighborhood: form.neighborhood.trim(),
-    phone: form.phone.trim(),
+    phone: cleanPhone,
     password: form.password,
     hasVehicle: role.value === 'collector' ? collectorData.hasVehicle === 'oui' : undefined,
     vehicle: role.value === 'collector' && collectorData.hasVehicle === 'oui'
@@ -283,6 +292,11 @@ async function submitForm() {
     successMessage.value = 'Inscription réussie ! Vous pouvez maintenant vous connecter.'
     errorMessage.value = ''
     registrationDone.value = true
+
+    // ✅ Reset formulaire après inscription réussie
+    resetFormData()
+    resetCollectorData()
+
   } catch (err) {
     errorMessage.value = err.message
     successMessage.value = ''
@@ -313,9 +327,14 @@ async function submitLogin() {
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.error || 'Erreur lors de la connexion')
+
+    // ✅ Stockage du token
+    localStorage.setItem('token', data.token)
+
     successMessage.value = 'Connexion réussie !'
     errorMessage.value = ''
-    // Ici tu peux stocker le token ou rediriger l'utilisateur
+    // 👉 Ici tu pourrais aussi router directement
+
   } catch (err) {
     errorMessage.value = err.message
     successMessage.value = ''
@@ -343,14 +362,13 @@ function goToMap() {
       const lng = position.coords.longitude
 
       try {
-        // Envoi au backend
         const res = await fetch(`${apiUrl}/api/location/saveLocation`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             latitude: lat,
             longitude: lng,
-            deviceId,      // récupéré comme dans ton code
+            deviceId,
             userType: role.value
           })
         })
@@ -362,7 +380,6 @@ function goToMap() {
       }
 
       isLoading.value = false
-      // Redirection vers la map avec le rôle en query param
       router.push({ name: 'map', query: { userType: role.value } })
     },
     error => {
@@ -372,8 +389,8 @@ function goToMap() {
     { enableHighAccuracy: true, timeout: 10000 }
   )
 }
-
 </script>
+
 
 <style scoped>
 .container {
